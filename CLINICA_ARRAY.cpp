@@ -11,11 +11,15 @@ struct paciente{
 };
 
 void menuDesordenados(paciente *, int &);
-//void menuOrdenados();
+void menuOrdenados(paciente *, int &);
 void insertar_d(paciente *, int &);
 void eliminar_d(paciente *,int &);
 void modificar_d(paciente *, int &);
-int buscar_d(paciente *, int );
+int buscar(paciente *, int );
+void insertar_o(paciente *, int &);
+//void eliminar_o(paciente *,int &);
+//void modificar_o(paciente *, int &);
+
 void mostrar(paciente *, int);
 int main(){
 	paciente x[MAX];
@@ -32,7 +36,7 @@ int main(){
 				menuDesordenados(x,n);
 				break;
 			case 2:
-				//menuOrdenados();
+				menuOrdenados(x,n);
 				break;
 			case 3:
 				break;		
@@ -42,7 +46,7 @@ int main(){
 	
 	return 0;
 }
-
+//................................................
 void menuDesordenados(paciente *x, int &n){
 	system("cls");
 int op,pos;
@@ -70,12 +74,57 @@ int op,pos;
 				mostrar(x,n);
 				break;
 			case 4:
-				pos=buscar_d(x,n);
-				if(pos>=0){
+				pos=buscar(x,n);
+				if(pos>0){
 					cout<<"La POSICION DEL DATO ES: "<<pos;
 				}else{
 					cout<<"No se encontro";
 				}
+				mostrar(x,n);
+				break;
+			case 5:
+				mostrar(x,n);
+				break;
+			case 6:
+				break;					
+		}
+		
+	}while(op>0 && op<6);
+}
+//------------------------------------------------
+void menuOrdenados(paciente *x, int &n){
+	system("cls");
+int op,pos;
+	do{
+		cout<<"-----MENU DE ARRAY ORDENADOS\n";
+		cout<<"1.- INSERTAR\n";
+		cout<<"2.- ELIMINAR\n";
+		cout<<"3.- MODIFICAR\n";
+		cout<<"4.- BUSCAR\n";
+		cout<<"5.- MOSTRAR\n";
+		cout<<"6.- REGRESAR AL MENU PRINCIPAL\n";
+		cout<<"Ingrese la opcion :"; cin>>op;
+		switch(op){
+			
+			case 1:
+				insertar_o(x,n);
+			    mostrar(x,n);
+				break;
+			case 2:
+				//eliminar_o(x,n);
+				mostrar(x,n);
+				break;
+			case 3:
+				//modificar_o(x,n);
+				mostrar(x,n);
+				break;
+			case 4:
+			/*	pos=buscar_o(x,n);
+				if(pos>=0){
+					cout<<"La POSICION DEL DATO ES: "<<pos;
+				}else{
+					cout<<"No se encontro";
+				}*/
 				mostrar(x,n);
 				break;
 			case 5:
@@ -202,7 +251,7 @@ void modificar_d(paciente *x, int &n){
 	
 }
 
-int buscar_d(paciente *x, int n){
+int buscar(paciente *x, int n){
 	int i,pos;
 	char hc1[10];
 	if(n>-1){
@@ -212,7 +261,7 @@ int buscar_d(paciente *x, int n){
 			if(strcmp(x[i].hc,hc1)==0){
 				pos=i;
 			}else{
-				pos=-i;
+				pos=-(i+1);
 			}
 			i++;
 		}
@@ -221,6 +270,28 @@ int buscar_d(paciente *x, int n){
 	return pos;
 }
 
+void insertar_o(paciente *x, int &n){
+	int pos,i;
+	char hc[10];
+	if(n>MAX-1){
+		cout<<"Ingrese el HISTORIAL CLINICO : "; cin>>hc;
+		if(n>-1){
+			pos =buscar(x,n);
+			if(pos<0){
+				n++;
+				pos=-pos;
+					for(i=n;i>=pos+1;i--){
+						x[i]=x[i-1];
+					}
+					strcpy(x[pos],hc);
+			}else{
+				cout<<"EL DATO YA EXISTE\n\n";
+			}
+		}
+	}else{
+		cout<<"ARRAY LLENO, PELIGRO DE DESBORDAMIENTO...no se inserto dato\n";
+	}
+}
 void mostrar(paciente *x,int n){
 	for(int i=0;i<=n;i++){
 		cout<<"\n\n["<<i+1<<"] : ";
