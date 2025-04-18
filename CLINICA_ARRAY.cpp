@@ -2,7 +2,7 @@
 #include <iostream>
 #include <string.h>
 #include <math.h>
-#define MAX 2
+#define MAX 5
 using namespace std;
 
 struct paciente{
@@ -15,12 +15,15 @@ void menuOrdenados(paciente *, int &);
 void insertar_d(paciente *, int &);
 void eliminar_d(paciente *,int &);
 void modificar_d(paciente *, int &);
-int buscar(paciente *, int );
+int buscar_o(paciente *, int, char * );
+void mostrar(paciente *,int);
 void insertar_o(paciente *, int &);
-//void eliminar_o(paciente *,int &);
-//void modificar_o(paciente *, int &);
-
+void eliminar_o(paciente *,int &);
+void modificar_o(paciente *, int &);
+void ordenar(paciente *, int);
+void reduce(paciente *, int, int);
 void mostrar(paciente *, int);
+
 int main(){
 	paciente x[MAX];
 	int op,n;
@@ -55,9 +58,8 @@ int op,pos;
 		cout<<"1.- INSERTAR\n";
 		cout<<"2.- ELIMINAR\n";
 		cout<<"3.- MODIFICAR\n";
-		cout<<"4.- BUSCAR\n";
-		cout<<"5.- MOSTRAR\n";
-		cout<<"6.- REGRESAR AL MENU PRINCIPAL\n";
+		cout<<"4.- MOSTRAR\n";
+		cout<<"5.- REGRESAR AL MENU PRINCIPAL\n";
 		cout<<"Ingrese la opcion :"; cin>>op;
 		switch(op){
 			
@@ -74,22 +76,13 @@ int op,pos;
 				mostrar(x,n);
 				break;
 			case 4:
-				pos=buscar(x,n);
-				if(pos>0){
-					cout<<"La POSICION DEL DATO ES: "<<pos;
-				}else{
-					cout<<"No se encontro";
-				}
 				mostrar(x,n);
 				break;
 			case 5:
-				mostrar(x,n);
-				break;
-			case 6:
 				break;					
 		}
 		
-	}while(op>0 && op<6);
+	}while(op>0 && op<5);
 }
 //------------------------------------------------
 void menuOrdenados(paciente *x, int &n){
@@ -100,41 +93,32 @@ int op,pos;
 		cout<<"1.- INSERTAR\n";
 		cout<<"2.- ELIMINAR\n";
 		cout<<"3.- MODIFICAR\n";
-		cout<<"4.- BUSCAR\n";
-		cout<<"5.- MOSTRAR\n";
-		cout<<"6.- REGRESAR AL MENU PRINCIPAL\n";
+		cout<<"4.- MOSTRAR\n";
+		cout<<"5.- REGRESAR AL MENU PRINCIPAL\n";
 		cout<<"Ingrese la opcion :"; cin>>op;
 		switch(op){
 			
 			case 1:
 				insertar_o(x,n);
-			    mostrar(x,n);
+			 	mostrar(x,n);
 				break;
 			case 2:
-				//eliminar_o(x,n);
+				eliminar_o(x,n);
 				mostrar(x,n);
 				break;
 			case 3:
-				//modificar_o(x,n);
+				modificar_o(x,n);
 				mostrar(x,n);
 				break;
+		
 			case 4:
-			/*	pos=buscar_o(x,n);
-				if(pos>=0){
-					cout<<"La POSICION DEL DATO ES: "<<pos;
-				}else{
-					cout<<"No se encontro";
-				}*/
 				mostrar(x,n);
 				break;
 			case 5:
-				mostrar(x,n);
-				break;
-			case 6:
 				break;					
 		}
 		
-	}while(op>0 && op<6);
+	}while(op>0 && op<5);
 }
 
 void insertar_d(paciente *x,int &n){
@@ -250,57 +234,183 @@ void modificar_d(paciente *x, int &n){
 	}
 	
 }
-
-int buscar(paciente *x, int n){
+//--------------------------------------------------
+int buscar_o(paciente *x, int n, char *dato){
 	int i,pos;
-	char hc1[10];
-	if(n>-1){
-		i=0;
-	cout<<"Ingrese LA HISTORIA CLINICA QUE DESEA BUSCAR: "; cin>>hc1;
-		while(i<=n){
-			if(strcmp(x[i].hc,hc1)==0){
-				pos=i;
-			}else{
-				pos=-(i+1);
-			}
-			i++;
-		}
-	
+	i=0;
+	while((i<=n)&& (strcmp(x[i].hc,dato)<0)){
+		i++;
+	}
+	if((i>n) || (strcmp(x[i].hc,dato)>0)){
+		pos=-(i+1);
+	}else if(strcmp(x[i].hc,dato)==0){
+		pos=i;
 	}
 	return pos;
+
 }
 
 void insertar_o(paciente *x, int &n){
-	int pos,i;
-	char hc[10];
-	if(n>MAX-1){
-		cout<<"Ingrese el HISTORIAL CLINICO : "; cin>>hc;
+	
+	if(n<MAX-1){
+		int i,cen,pos;
+		char hc1[10];
+		i=0;
+		cen=0;
+		paciente dato;
+		cout<<"\n\n----INSERTAR PACIENTE------\n\n";
+		cout<<"Ingrese el HISTORIAL CLINICO : "; cin>>hc1;
 		if(n>-1){
-			pos =buscar(x,n);
-			if(pos<0){
-				n++;
-				pos=-pos;
+			while(i<=n && (cen==0)){
+				if(strcmp(x[i].hc,hc1)==0){
+					cen=1;
+				}else{
+					i++;
+				}	
+			}
+			
+		}
+			
+			if(cen==0){
+				
+				strcpy(dato.hc,hc1);
+				cout<<"INGRESE EL NOMBRE: "; cin>>dato.nomb;
+				cout<<"INGRESE SU PESO: "; cin>>dato.peso;
+				cout<<"INGRESE SU TALLA: "; cin>>dato.talla;
+				dato.imc=(dato.peso/(dato.talla*dato.talla));
+				cout<<"SU INDICE DE MASA CORPORAL ES: "<<dato.imc;
+				
+				pos=buscar_o(x,n,dato.hc);
+				pos=pos+1;
+				if(pos<=0){
+					n++;
+					pos=-pos;
 					for(i=n;i>=pos+1;i--){
 						x[i]=x[i-1];
 					}
-					strcpy(x[pos],hc);
+					x[pos]=dato;
+				}else{
+					cout<<"\n\n\n\nLOS DATOS INGRESADOS YA EXISTEN EN LA BASE DE DATOS....";	
+					}
+				
 			}else{
-				cout<<"EL DATO YA EXISTE\n\n";
+				cout<<"\n\n\n\nEL DATO YA ESTA REGISTRADO EN LA BASE DE DATOS. No se realizo la insercion.....";
 			}
-		}
+			
 	}else{
 		cout<<"ARRAY LLENO, PELIGRO DE DESBORDAMIENTO...no se inserto dato\n";
 	}
+	
 }
-void mostrar(paciente *x,int n){
-	for(int i=0;i<=n;i++){
-		cout<<"\n\n["<<i+1<<"] : ";
-		cout<<"\nHISTORIA CLINICA : "<<x[i].hc;
-		cout<<"\nNOMBRE : "<<x[i].nomb;
-		cout<<"\nPESO: "<<x[i].peso;
-		cout<<"\nTALLA : "<<x[i].talla;
-		cout<<"\nINDICE DE MASA CORPORAL: "<<x[i].imc;	
-	cout<<"\n------------------------------------\n\n";
+
+void eliminar_o(paciente *x,int &n){
+	int i,cen,pos;
+	char hclinica[10];
+
+	if(n>-1){
+		cout<<"\n\t\tDATO A ELIMINAR :\n\n";
+		cout<<"\tHISTORIA CLINICA : "; cin>>hclinica;
+		pos=buscar_o(x,n,hclinica);
+		if (pos>=0){
+			n=n-1;
+			for(i=pos;i<=n;i++)
+				x[i]=x[i+1];
+		}
+		else
+			cout<<"\n\n\t\tLA HISTORIA CLININICA NO ESTÁ REGISTRADA\n\n";
 	}
-	system("pause");
+	else
+		cout<<"\n\n\t\tEL ARREGLO ESTA VACIO. No se elimino ningun dato\n\n";
+}
+
+void modificar_o(paciente *x,int &n){
+	
+	int i,op,pos;
+	char hc1[10];
+
+	if (n>-1){
+		
+		cout<<"\n\tCODIGO DEL REGISTRO A MODIFICAR : \n\n";
+		cout<<"\tHISTORIA CLINICA : "; cin>>hc1;
+		pos=buscar_o(x,n,hc1);
+		cout<<"pos "<<pos<<endl;
+		if (pos>-1){
+			
+			cout<<"\n\n\tQUE CAMPO DESEA MODIFICAR? \n\n";
+			cout<<"1. HISTORIA CLINICA		2. NOMBRE		3. PESO		4. TALLA \n\n";
+			cout<<"OPCION : "; cin>>op;
+			switch(op){
+				case 1:
+					cout<<"\nINGRESA LA HISTORIA CLINICA CORRECTA : "; cin>>x[pos].hc;
+					ordenar(x,n);
+					break;
+				case 2:
+					cout<<"\nINGRESA EL NOMBRE CORRECTO : "; cin>>x[pos].nomb;
+					break;
+				case 3:
+					cout<<"\nINGRESA EL PESO CORRECTO : "; cin>>x[pos].peso;
+					x[pos].imc=x[pos].peso/pow(x[pos].talla,2);
+					break;
+				case 4:
+					cout<<"\nINGRESA LA TALLA CORRECTA : "; cin>>x[pos].talla;
+					x[pos].imc=x[pos].peso/pow(x[pos].talla,2);
+					break;
+			}
+			
+		}else{
+				cout<<"\n\n\t\tLA HISTORIA CLINICA "<<hc1<<" NO ESTA EN EL ARREGLO\n\n";
+						system("pause");
+		}
+	
+	} else{
+			cout<<"\n\n\nEL ARREGLO ESTA VACIO...\n\n\n";
+			system("pause");
+		}			
+}
+
+//Metodo quicksort para ordenamiento
+void ordenar(paciente *A, int n) {
+    if (n >= 0)
+        reduce(A, 0, n);
+}
+
+void reduce(paciente *A, int inicio, int final) {
+    if (inicio >= final) return;
+
+    paciente pivote = A[inicio];
+    int i = inicio + 1;
+    int j = final;
+
+    while (i <= j) {
+        while (i <= final && strcmp(A[i].hc, pivote.hc) <= 0) i++;
+        while (j >= inicio && strcmp(A[j].hc, pivote.hc) > 0) j--;
+
+        if (i < j) {
+            swap(A[i], A[j]);
+        }
+    }
+
+    swap(A[inicio], A[j]);
+
+    reduce(A, inicio, j - 1);
+    reduce(A, j + 1, final);
+}
+
+
+void mostrar(paciente *x,int n){
+	if(n>-1){
+		
+		for(int i=0;i<=n;i++){
+			cout<<"\n\n["<<i+1<<"] : ";
+			cout<<"\nHISTORIA CLINICA : "<<x[i].hc;
+			cout<<"\nNOMBRE : "<<x[i].nomb;
+			cout<<"\nPESO: "<<x[i].peso;
+			cout<<"\nTALLA : "<<x[i].talla;
+			cout<<"\nINDICE DE MASA CORPORAL: "<<x[i].imc;	
+		cout<<"\n------------------------------------\n\n";
+		}
+		system("pause");
+	}else{
+		cout<<"\n\nLista Vacía\n\n";
+	}
 }
